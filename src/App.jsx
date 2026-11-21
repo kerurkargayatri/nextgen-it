@@ -107,7 +107,7 @@ function App() {
               </a>
 
               <a
-                href="/resume.pdf"
+                href={`${import.meta.env.BASE_URL}resume.pdf`}
                 download="Gayatri_Kerurkar_Resume.pdf"
                 className="secondary-btn"
               >

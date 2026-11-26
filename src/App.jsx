@@ -1,330 +1,257 @@
 
-import { useState } from 'react'
-import './App.css'
-import { supabase } from './supabase'
+import { useState } from "react";
+import { supabase } from "./supabase";
+import "./App.css";
 
-const projects = [
-  {
-    title: 'Bright Future Coaching Classes',
-    category: 'Web Development',
-    description: 'A responsive coaching institute website with an enquiry form.',
-    tech: 'HTML • CSS • JavaScript • Supabase',
-    link: 'https://kerurkargayatri.github.io/coaching-classes-website/'
-  },
-  {
-    title: 'JobSkills – Find Your Future',
-    category: 'Web Application',
-    description: 'A platform focused on skills, learning and career opportunities.',
-    tech: 'HTML • CSS • JavaScript',
-    link: 'https://kerurkargayatri.github.io/jobskills-app/'
-  },
-  {
-    title: 'E-commerce Customer Intelligence',
-    category: 'Data Analytics',
-    description: 'An e-commerce project focused on customer intelligence and insights.',
-    tech: 'Python • Data Analysis • Machine Learning',
-    link: 'https://github.com/kerurkargayatri/ecommerce-customer-intelligence'
-  }
-]
-
-const skills = [
-  'HTML5', 'CSS3', 'JavaScript', 'React.js',
-  'Supabase', 'Responsive Design', 'Manual Testing',
-  'Test Case Writing', 'Bug Reporting'
-]
-
-function App() {
+export default function App() {
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    message: ''
-  })
+    name: "",
+    email: "",
+    phone: "",
+    service: "",
+    budget: "",
+    message: "",
+  });
 
-  const [status, setStatus] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState("");
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+  const services = [
+    "Website Development",
+    "Ecommerce & Retail",
+    "Mobile App Development",
+    "CRM & ERP Solutions",
+    "Software Testing",
+    "AI & Machine Learning",
+    "Data Analytics",
+    "Cloud & DevOps",
+    "Automation & Integrations",
+    "Other",
+  ];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setStatus('')
+  const updateForm = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    try {
-      const { error } = await supabase
-        .from('contacts')
-        .insert([form])
+  async function submitEnquiry(e) {
+    e.preventDefault();
+    setSending(true);
+    setStatus("");
 
-      if (error) throw error
+    const { error } = await supabase.from("enquiries").insert([
+      {
+        full_name: form.name,
+        email: form.email,
+        phone: form.phone,
+        service: form.service,
+        budget: form.budget,
+        message: form.message,
+      },
+    ]);
 
-      setStatus('Thank you! Your message has been submitted.')
-      setForm({ name: '', email: '', message: '' })
-    } catch (error) {
-      setStatus(error.message || 'Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
+    if (error) {
+      setStatus("Enquiry failed: " + error.message);
+    } else {
+      setStatus("Thank you! Your enquiry has been submitted.");
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        budget: "",
+        message: "",
+      });
     }
+
+    setSending(false);
   }
 
   return (
     <div className="website">
-
       <header className="navbar">
-        <a href="#home" className="logo">NextGen<span>IT.</span></a>
+        <a className="brand" href="#">
+          <span className="brand-icon">N</span>
+          <span>NextGen <b>IT</b></span>
+        </a>
 
-        <nav>
+        <nav className="nav-links">
           <a href="#home">Home</a>
           <a href="#about">About</a>
-          <a href="#skills">Skills</a>
           <a href="#services">Services</a>
-          <a href="#projects">Projects</a>
+          <a href="#process">Process</a>
           <a href="#contact">Contact</a>
         </nav>
 
-        <a href="#contact" className="nav-btn">Let's Talk ↗</a>
+        <a href="#contact" className="nav-cta">Get Started →</a>
       </header>
 
       <main>
         <section className="hero" id="home">
           <div className="hero-content">
-            <p className="eyebrow">WELCOME TO NEXTGEN IT</p>
-
+            <span className="eyebrow">YOUR DIGITAL GROWTH PARTNER</span>
             <h1>
               Building Digital
-              <span> Experiences.</span>
+              <span> Solutions for</span>
+              <span>Tomorrow.</span>
             </h1>
-
-            <p className="hero-description">
-              We create modern websites, digital solutions and
-              quality-focused software experiences.
+            <p>
+              We aim to help businesses grow through modern websites,
+              software solutions and technology-driven digital experiences.
             </p>
 
-            <div className="hero-buttons">
-              <a href="#projects" className="primary-btn">
-                Explore Projects ↗
-              </a>
-
-              <a
-                href={`${import.meta.env.BASE_URL}resume.pdf`}
-                download="Gayatri_Kerurkar_Resume.pdf"
-                className="secondary-btn"
-              >
-                ↓ Download Resume
-              </a>
+            <div className="hero-actions">
+              <a href="#contact" className="btn-primary">Start a Project →</a>
+              <a href="#services" className="btn-secondary">Explore Services</a>
             </div>
 
-            <div className="hero-note">
-              <span className="online-dot"></span>
-              Web Development • Software Testing • Digital Solutions
-            </div>
+            <p className="hero-note">Innovation • Technology • Growth</p>
           </div>
 
-          <div className="hero-card">
-            <div className="card-top">
-              <span>✦</span>
-              <span>MY DIGITAL SPACE</span>
-            </div>
-            <div className="code-window">
-              <p className="code-muted">// Welcome to NextGen IT</p>
-              <p><span className="code-purple">const</span> agency = {'{'}</p>
-              <p className="indent">name: <span className="code-green">'NextGen IT'</span>,</p>
-              <p className="indent">focus: <span className="code-green">'Innovation'</span>,</p>
-              <p className="indent">quality: <span className="code-green">'Always'</span></p>
-              <p>{'}'}</p>
-              <p className="code-bottom">Let's build something great. <span>▌</span></p>
-            </div>
-            <div className="card-footer">
-              <span>CREATIVE THINKING</span>
-              <span>01 / 04</span>
-            </div>
+          <div className="hero-visual">
+            <div className="visual-orbit orbit-one"></div>
+            <div className="visual-orbit orbit-two"></div>
+            <div className="visual-core">NG</div>
+            <div className="floating-card card-top">✦ Smart Solutions</div>
+            <div className="floating-card card-bottom">✓ Digital Innovation</div>
           </div>
         </section>
 
-        <section className="about section" id="about">
-          <div className="section-label">01 — ABOUT</div>
+        <section className="trust-strip">
+          <span>Technology</span>
+          <span>Innovation</span>
+          <span>Digital Solutions</span>
+          <span>Customer Focus</span>
+        </section>
+
+        <section className="section about-section" id="about">
+          <div className="section-heading">
+            <span className="eyebrow">WHO WE ARE</span>
+            <h2>Technology with a purpose.</h2>
+          </div>
           <div className="about-grid">
-            <h2>Technology with a <span>purpose.</span></h2>
-            <div>
+            <p className="large-copy">
+              NextGen IT is an emerging technology initiative focused on
+              creating useful, accessible and modern digital solutions.
+            </p>
+            <div className="about-detail">
               <p>
-                NextGen IT is a growing digital initiative focused on
-                website development, software testing and practical
-                digital solutions.
+                Our goal is to understand business challenges and explore
+                practical technology solutions that make everyday work easier.
               </p>
-              <p>
-                Founded by Gayatri Suresh Kerurkar, a BCA Final Year
-                student passionate about technology, web development
-                and software quality.
-              </p>
-              <a href="#contact" className="text-link">Let's work together ↗</a>
+              <a href="#contact" className="text-link">Let's work together →</a>
             </div>
           </div>
         </section>
 
-        <section className="section" id="skills">
-          <div className="section-label">02 — EXPERTISE</div>
-          <h2 className="section-heading">Skills & <span>Technologies</span></h2>
-          <p className="section-subtitle">
-            Tools and technologies I have worked with.
-          </p>
-
-          <div className="skills-grid">
-            {skills.map((skill, index) => (
-              <div className="skill-card" key={skill}>
-                <span>0{index + 1}</span>
-                <h3>{skill}</h3>
-              </div>
-            ))}
+        <section className="section services-section" id="services">
+          <div className="section-heading">
+            <span className="eyebrow">WHAT WE DO</span>
+            <h2>Services designed for progress.</h2>
+            <p>Technology services we aim to offer businesses and organisations.</p>
           </div>
-        </section>
-
-        <section className="section" id="services">
-          <div className="section-label">03 — WHAT I DO</div>
-          <h2 className="section-heading">Services & <span>Solutions</span></h2>
 
           <div className="services-grid">
-            <article className="service-card">
-              <div className="service-icon">⌘</div>
-              <h3>Website Development</h3>
-              <p>Responsive and modern websites designed for a better user experience.</p>
-              <span>01 / DEVELOPMENT</span>
-            </article>
-
-            <article className="service-card">
-              <div className="service-icon">⌕</div>
-              <h3>Software Testing</h3>
-              <p>Manual testing, test case preparation and bug reporting practice.</p>
-              <span>02 / QUALITY</span>
-            </article>
-
-            <article className="service-card">
-              <div className="service-icon">✳</div>
-              <h3>Digital Solutions</h3>
-              <p>Simple digital experiences that help solve practical problems.</p>
-              <span>03 / INNOVATION</span>
-            </article>
-          </div>
-        </section>
-
-        <section className="section" id="projects">
-          <div className="section-label">04 — PORTFOLIO</div>
-          <h2 className="section-heading">Selected <span>Projects</span></h2>
-          <p className="section-subtitle">
-            A selection of projects I have worked on.
-          </p>
-
-          <div className="projects-grid">
-            {projects.map((project, index) => (
-              <article className="project-card" key={project.title}>
-                <div className="project-number">PROJECT / 0{index + 1}</div>
-                <div className="project-symbol">✳</div>
-                <p className="project-category">{project.category}</p>
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <div className="tech-tags">{project.tech}</div>
-                <a href={project.link} target="_blank" rel="noreferrer">
-                  View Project ↗
-                </a>
+            {services.map((service, index) => (
+              <article className="service-card" key={service}>
+                <span className="service-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div className="service-symbol">✦</div>
+                <h3>{service}</h3>
+                <p>Explore a practical digital solution for your requirements.</p>
+                <a href="#contact">Discuss your project →</a>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="section testing-section" id="testing">
-          <div className="section-label">05 — QUALITY ASSURANCE</div>
-          <h2 className="section-heading">Manual Testing <span>Practice</span></h2>
-
-          <div className="testing-grid">
-            <div>
-              <h3>Testing with attention to detail.</h3>
-              <p>
-                Learning and practicing software testing concepts
-                through test scenarios, test cases and bug reports.
-              </p>
-            </div>
-
-            <div className="testing-list">
-              <p><span>✓</span> Test Case Writing</p>
-              <p><span>✓</span> Functional Testing</p>
-              <p><span>✓</span> UI Testing</p>
-              <p><span>✓</span> Bug Reporting</p>
-              <p><span>✓</span> Website Testing</p>
-            </div>
+        <section className="section process-section" id="process">
+          <div className="section-heading">
+            <span className="eyebrow">HOW WE WORK</span>
+            <h2>A clear path from idea to solution.</h2>
+          </div>
+          <div className="process-grid">
+            {[
+              "Understand your requirements",
+              "Plan the solution",
+              "Design the experience",
+              "Develop the project",
+              "Test and review",
+              "Deliver the solution",
+            ].map((step, index) => (
+              <article className="process-card" key={step}>
+                <span>0{index + 1}</span>
+                <h3>{step}</h3>
+              </article>
+            ))}
           </div>
         </section>
 
-        <section className="section contact-section" id="contact">
-          <div className="section-label">06 — GET IN TOUCH</div>
-          <div className="contact-grid">
-            <div>
-              <h2>Have a project in <span>mind?</span></h2>
-              <p>Let's connect and discuss ideas, opportunities and collaborations.</p>
+        <section className="section principles-section">
+          <div className="section-heading">
+            <span className="eyebrow">OUR PRINCIPLES</span>
+            <h2>Built around what matters.</h2>
+          </div>
+          <div className="principles-grid">
+            <article><h3>01. Simplicity</h3><p>Making technology easier to understand and use.</p></article>
+            <article><h3>02. Quality</h3><p>Giving attention to details, reliability and testing.</p></article>
+            <article><h3>03. Innovation</h3><p>Exploring useful ideas and modern approaches.</p></article>
+          </div>
+        </section>
 
-              <div className="contact-details">
-                <p>EMAIL</p>
-                <a href="mailto:gayatrikerurkar2708@gmail.com">
-                  gayatrikerurkar2708@gmail.com
-                </a>
-                <p>GITHUB</p>
-                <a href="https://github.com/kerurkargayatri" target="_blank" rel="noreferrer">
-                  github.com/kerurkargayatri ↗
-                </a>
-                <p>LINKEDIN</p>
-                <a href="https://www.linkedin.com/in/gayatri-kerurkar-b102b1321/" target="_blank" rel="noreferrer">
-                  LinkedIn Profile ↗
-                </a>
-              </div>
+        <section className="section enquiry-section" id="contact">
+          <div className="enquiry-copy">
+            <span className="eyebrow">LET'S CONNECT</span>
+            <h2>Have a project in mind?</h2>
+            <p>Tell us about your requirements. We will review your enquiry.</p>
+            <div className="contact-detail">
+              <strong>NextGen IT</strong>
+              <p>Digital Solutions • Technology • Innovation</p>
+            </div>
+          </div>
+
+          <form className="enquiry-form" onSubmit={submitEnquiry}>
+            <h3>Tell us about your project</h3>
+
+            <div className="form-row">
+              <input name="name" placeholder="Full Name *" value={form.name} onChange={updateForm} required />
+              <input name="email" type="email" placeholder="Email Address *" value={form.email} onChange={updateForm} required />
             </div>
 
-            <form className="contact-form" onSubmit={handleSubmit}>
-              <label>Your Name</label>
-              <input
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Enter your name"
-                required
-              />
+            <input name="phone" placeholder="Mobile Number" value={form.phone} onChange={updateForm} />
 
-              <label>Email Address</label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                required
-              />
+            <select name="service" value={form.service} onChange={updateForm} required>
+              <option value="">Select a service *</option>
+              {services.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
 
-              <label>Your Message</label>
-              <textarea
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                placeholder="Tell us about your project..."
-                rows="5"
-                required
-              />
+            <input name="budget" placeholder="Estimated Budget (optional)" value={form.budget} onChange={updateForm} />
 
-              <button type="submit" disabled={loading}>
-                {loading ? 'Sending...' : 'Send Message ↗'}
-              </button>
+            <textarea name="message" placeholder="Tell us about your project *" value={form.message} onChange={updateForm} required rows="5" />
 
-              {status && <p className="form-status">{status}</p>}
-            </form>
-          </div>
+            <button className="submit-btn" type="submit" disabled={sending}>
+              {sending ? "Submitting..." : "Submit Enquiry →"}
+            </button>
+
+            {status && <p className="form-status">{status}</p>}
+            <small className="privacy-note">Your information will be used to respond to your enquiry.</small>
+          </form>
         </section>
       </main>
 
       <footer className="footer">
-        <a href="#home" className="logo">NextGen<span>IT.</span></a>
-        <p>Designed & developed by Gayatri Suresh Kerurkar.</p>
-        <p>© {new Date().getFullYear()} NextGen IT. All rights reserved.</p>
+        <div className="footer-top">
+          <div className="footer-brand">
+            <span className="brand-icon">N</span>
+            <strong>NextGen IT</strong>
+            <p>Building possibilities through technology.</p>
+          </div>
+          <a href="#home">Back to top ↑</a>
+        </div>
+        <div className="footer-bottom">
+          © {new Date().getFullYear()} NextGen IT. All rights reserved.
+        </div>
       </footer>
-
     </div>
-  )
+  );
 }
-
-export default App
